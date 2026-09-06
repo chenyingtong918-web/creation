@@ -691,24 +691,29 @@
     }
 
     #ai-creation-homepage .feature {
-      min-height: 132px;
+      min-height: 168px;
       border-radius: 24px;
       border: 1px solid rgba(255,255,255,.11);
-      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      background:
+        linear-gradient(180deg, rgba(5,6,10,.02) 0%, rgba(5,6,10,.16) 50%, rgba(5,6,10,.82) 100%),
+        var(--image);
+      background-size: cover;
+      background-position: center;
       padding: 18px;
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 56px rgba(0,0,0,.26);
     }
 
     #ai-creation-homepage .feature::after {
       content: "";
       position: absolute;
-      inset: auto -20px -46px 28%;
-      height: 90px;
-      border-radius: 999px;
-      background: var(--glow);
-      filter: blur(26px);
-      opacity: .48;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.14), transparent 32%, rgba(0,0,0,.24));
+      pointer-events: none;
     }
 
     #ai-creation-homepage .feature .icon {
@@ -721,6 +726,11 @@
       border: 1px solid rgba(255,255,255,.12);
       margin-bottom: 17px;
       font-size: 17px;
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      z-index: 1;
+      color: transparent;
     }
 
     #ai-creation-homepage .feature b {
@@ -740,27 +750,120 @@
       z-index: 1;
     }
 
+    #ai-creation-homepage .template-grid,
+    #ai-creation-homepage .news-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    #ai-creation-homepage .template-card,
+    #ai-creation-homepage .news-card {
+      min-height: 250px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.12);
+      overflow: hidden;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(4,5,9,.02) 0%, rgba(4,5,9,.08) 42%, rgba(4,5,9,.8) 100%),
+        var(--image);
+      background-size: cover;
+      background-position: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 56px rgba(0,0,0,.28);
+    }
+
+    #ai-creation-homepage .template-card.large {
+      grid-column: span 2;
+    }
+
+    #ai-creation-homepage .template-card::after,
+    #ai-creation-homepage .news-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent 42%);
+      pointer-events: none;
+    }
+
+    #ai-creation-homepage .card-copy {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 16px;
+      z-index: 1;
+      display: grid;
+      gap: 6px;
+    }
+
+    #ai-creation-homepage .card-copy b {
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    #ai-creation-homepage .card-copy span {
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      line-height: 1.42;
+      max-width: 92%;
+    }
+
+    #ai-creation-homepage .try-btn {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      z-index: 2;
+      min-width: 84px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 720;
+      backdrop-filter: blur(14px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #ai-creation-homepage .template-card .card-copy {
+      right: 112px;
+    }
+
+    #ai-creation-homepage .news-card {
+      min-height: 214px;
+    }
+
     #ai-creation-homepage .gallery {
       display: grid;
-      grid-template-columns: 1.2fr .8fr 1fr 1fr;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
-      min-height: 190px;
     }
 
     #ai-creation-homepage .work {
-      min-height: 190px;
+      min-height: 220px;
       border-radius: 24px;
       overflow: hidden;
       position: relative;
       border: 1px solid rgba(255,255,255,.11);
-      background: var(--thumb);
+      background:
+        linear-gradient(180deg, rgba(5,6,10,0) 20%, rgba(5,6,10,.1) 52%, rgba(0,0,0,.8) 100%),
+        var(--thumb);
+      background-size: cover;
+      background-position: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    #ai-creation-homepage .work.wide {
+      grid-column: span 2;
     }
 
     #ai-creation-homepage .work::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.76));
+      background: linear-gradient(135deg, rgba(255,255,255,.1), transparent 40%);
     }
 
     #ai-creation-homepage .work span {
@@ -793,7 +896,11 @@
       #ai-creation-homepage .showcase { height: 250px; }
       #ai-creation-homepage .media-card { width: 280px; height: 160px; }
       #ai-creation-homepage .feature-grid,
+      #ai-creation-homepage .template-grid,
+      #ai-creation-homepage .news-grid,
       #ai-creation-homepage .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #ai-creation-homepage .template-card.large,
+      #ai-creation-homepage .work.wide { grid-column: span 2; }
       #ai-creation-homepage .nav { margin-top: 64px; }
     }
   </style>
@@ -900,25 +1007,84 @@
         <span class="see-more">查看全部 ›</span>
       </div>
       <section class="feature-grid" aria-label="核心创作能力">
-        <article class="feature" style="--glow: rgba(84,227,255,.9);">
-          <div class="icon">▧</div>
+        <article class="feature" style='--image: url("https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80");'>
+          <div class="icon"></div>
           <b>图片生成</b>
           <p>海报、头像、商品图、概念场景，支持参考图与风格一致。</p>
         </article>
-        <article class="feature" style="--glow: rgba(154,108,255,.9);">
-          <div class="icon">▶</div>
+        <article class="feature" style='--image: url("https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80");'>
+          <div class="icon"></div>
           <b>视频生成</b>
           <p>文生视频、图生视频、镜头运动与短片分镜一站完成。</p>
         </article>
-        <article class="feature" style="--glow: rgba(255,92,214,.88);">
-          <div class="icon">✎</div>
+        <article class="feature" style='--image: url("https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80");'>
+          <div class="icon"></div>
           <b>智能编辑</b>
           <p>局部重绘、扩图、换背景、换装、去物体，保留创意控制。</p>
         </article>
-        <article class="feature" style="--glow: rgba(99,243,176,.82);">
-          <div class="icon">⌁</div>
+        <article class="feature" style='--image: url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80");'>
+          <div class="icon"></div>
           <b>工作流</b>
           <p>把常用提示词、模型、素材和发布规格组合成自动流程。</p>
+        </article>
+      </section>
+
+      <div class="section-title">
+        <h2>热门创作模板</h2>
+        <span class="see-more">See All ›</span>
+      </div>
+      <section class="template-grid" aria-label="热门创作模板">
+        <article class="template-card large" style='--image: url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80");'>
+          <div class="card-copy">
+            <b>消费电子主图生成</b>
+            <span>输入卖点与参考图，自动生成产品棚拍、爆炸图和详情页首屏。</span>
+          </div>
+          <div class="try-btn">Try it now</div>
+        </article>
+        <article class="template-card" style='--image: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>旅行风景短片</b>
+            <span>把城市、季节和镜头节奏组合成 8 秒旅拍。</span>
+          </div>
+          <div class="try-btn">Try it now</div>
+        </article>
+        <article class="template-card" style='--image: url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>音乐 MV 分镜</b>
+            <span>歌词情绪、舞台灯光、人物动作一次生成。</span>
+          </div>
+          <div class="try-btn">Try it now</div>
+        </article>
+      </section>
+
+      <div class="section-title">
+        <h2>最新能力</h2>
+        <span class="see-more">查看更新 ›</span>
+      </div>
+      <section class="news-grid" aria-label="最新能力">
+        <article class="news-card" style='--image: url("https://images.unsplash.com/photo-1498050108023-c5249f4df0852?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>Agent Live</b>
+            <span>自动拆解创作任务，连续生成脚本、分镜、画面和发布素材。</span>
+          </div>
+        </article>
+        <article class="news-card" style='--image: url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>多图层编辑</b>
+            <span>把图片拆成可移动图层，文字、主体、背景可以单独调整。</span>
+          </div>
+        </article>
+        <article class="news-card" style='--image: url("https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>模板批量套版</b>
+            <span>同一套设计自动适配横图、竖图、方图和多语言版本。</span>
+          </div>
+        </article>
+        <article class="news-card" style='--image: url("https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80");'>
+          <div class="card-copy">
+            <b>镜头控制升级</b>
+            <span>支持推进、环绕、俯拍、摇移等更细腻的短片镜头。</span>
+          </div>
         </article>
       </section>
 
@@ -927,10 +1093,12 @@
         <span class="see-more">进入社区 ›</span>
       </div>
       <section class="gallery" aria-label="灵感作品流">
-        <article class="work" style="--thumb: radial-gradient(circle at 68% 30%, #d7f8ff 0 9%, transparent 10%), linear-gradient(135deg,#112235,#3151ff 46%,#5cf4c8);"><span>电商主图大片<small>商品图生成 · 一键扩展比例</small></span></article>
-        <article class="work" style="--thumb: radial-gradient(circle at 52% 40%, #ffc6d9 0 13%, transparent 14%), linear-gradient(135deg,#2a1018,#a52662 48%,#ffb366);"><span>国风角色短片<small>角色一致性 · 视频生成</small></span></article>
-        <article class="work" style="--thumb: repeating-linear-gradient(110deg, rgba(255,255,255,.12) 0 2px, transparent 2px 28px), linear-gradient(135deg,#16121e,#4d2ca8 48%,#56e8ff);"><span>音乐 MV 分镜<small>工作流 · 批量出片</small></span></article>
-        <article class="work" style="--thumb: radial-gradient(circle at 44% 46%, #fff6bc 0 11%, transparent 12%), linear-gradient(135deg,#10201c,#237c65 42%,#d8ff80);"><span>品牌海报套系<small>模板生成 · 多尺寸交付</small></span></article>
+        <article class="work wide" style='--thumb: url("https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80");'><span>电商主图大片<small>商品图生成 · 一键扩展比例</small></span></article>
+        <article class="work" style='--thumb: url("https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80");'><span>角色写真套图<small>角色一致性 · 多角度出图</small></span></article>
+        <article class="work" style='--thumb: url("https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=900&q=80");'><span>电影感短片<small>镜头运动 · 视频生成</small></span></article>
+        <article class="work" style='--thumb: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80");'><span>自然风景海报<small>艺术风格 · 高清扩图</small></span></article>
+        <article class="work" style='--thumb: url("https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80");'><span>品牌海报套系<small>模板生成 · 多尺寸交付</small></span></article>
+        <article class="work wide" style='--thumb: url("https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1200&q=80");'><span>户外广告分镜<small>脚本拆解 · 批量出片</small></span></article>
       </section>
     </main>
   </div>
