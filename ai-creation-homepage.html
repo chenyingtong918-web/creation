@@ -1,0 +1,877 @@
+<div id="ai-creation-homepage" aria-label="AI创作平台首页深色视觉稿">
+  <style>
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #05060a;
+      overflow-x: hidden;
+    }
+
+    #ai-creation-homepage {
+      --bg: #08090d;
+      --panel: #15161c;
+      --panel-2: #1d1f27;
+      --line: rgba(255,255,255,.12);
+      --line-strong: rgba(255,255,255,.22);
+      --text: #f7f7fb;
+      --muted: #9699a6;
+      --dim: #686c79;
+      --cyan: #54e3ff;
+      --violet: #9a6cff;
+      --pink: #ff5cd6;
+      --green: #63f3b0;
+      --amber: #ffc768;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      width: 100vw;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 36% 14%, rgba(93, 112, 255, .22), transparent 24%),
+        radial-gradient(circle at 76% 18%, rgba(255, 92, 214, .13), transparent 22%),
+        linear-gradient(180deg, #090a0f 0%, #07080b 58%, #0b0c11 100%);
+      overflow: hidden;
+      position: relative;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    #ai-creation-homepage * { box-sizing: border-box; }
+
+    #ai-creation-homepage .grain {
+      position: absolute;
+      inset: 0;
+      opacity: .34;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at 55% 16%, black, transparent 58%);
+    }
+
+    #ai-creation-homepage .wave {
+      position: absolute;
+      left: 128px;
+      right: 24px;
+      top: 18px;
+      height: 420px;
+      opacity: .56;
+      pointer-events: none;
+      background:
+        repeating-radial-gradient(ellipse at 50% 52%, transparent 0 21px, rgba(130,144,255,.18) 22px 24px, transparent 25px 42px);
+      transform: perspective(800px) rotateX(62deg) scaleY(.74);
+      filter: blur(.2px);
+      mask-image: linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+    }
+
+    #ai-creation-homepage .shell {
+      position: relative;
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      min-height: 760px;
+      z-index: 1;
+    }
+
+    #ai-creation-homepage .sidebar {
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+      border-right: 1px solid rgba(255,255,255,.08);
+      background: rgba(10,11,16,.72);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+      gap: 26px;
+    }
+
+    #ai-creation-homepage .brand-slot {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.055);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.035);
+      display: grid;
+      place-items: center;
+    }
+
+    #ai-creation-homepage .brand-slot::before {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 1px dashed rgba(255,255,255,.32);
+      background: rgba(255,255,255,.035);
+    }
+
+    #ai-creation-homepage .nav {
+      margin-top: 86px;
+      display: grid;
+      gap: 24px;
+      width: 100%;
+    }
+
+    #ai-creation-homepage .nav-item {
+      width: 100%;
+      min-height: 54px;
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      color: #777b88;
+      font-size: 12px;
+      line-height: 1;
+      position: relative;
+    }
+
+    #ai-creation-homepage .nav-item.active {
+      color: #fff;
+    }
+
+    #ai-creation-homepage .nav-item.active::before {
+      display: none;
+    }
+
+    #ai-creation-homepage .nav-icon,
+    #ai-creation-homepage .tiny-icon {
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: currentColor;
+    }
+
+    #ai-creation-homepage .nav-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.045);
+      font-size: 0;
+    }
+
+    #ai-creation-homepage .nav-icon::before {
+      content: "";
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      border: 1px dashed rgba(255,255,255,.34);
+      background: rgba(255,255,255,.04);
+    }
+
+    #ai-creation-homepage .bottom-tools {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 24px;
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+    }
+
+    #ai-creation-homepage .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.22);
+      background:
+        radial-gradient(circle at 35% 28%, #ffe2a6 0 17%, transparent 18%),
+        radial-gradient(circle at 62% 58%, #ff68c9 0 15%, transparent 16%),
+        linear-gradient(135deg, #35e6d1, #795dff 56%, #ffb15c);
+      box-shadow: 0 0 18px rgba(154,108,255,.34);
+    }
+
+    #ai-creation-homepage main {
+      padding: 34px 44px 30px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    #ai-creation-homepage .topline {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      color: #d5d7df;
+      font-size: 14px;
+    }
+
+    #ai-creation-homepage .model-strip {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    #ai-creation-homepage .model-pill {
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.055);
+      padding: 8px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    #ai-creation-homepage .model-pill.hot strong {
+      color: #61d7ff;
+      font-weight: 780;
+      margin-left: 4px;
+    }
+
+    #ai-creation-homepage .hero {
+      min-height: 672px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 82px;
+      padding: 116px 0 0;
+      position: relative;
+    }
+
+    #ai-creation-homepage .hero::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 112px;
+      width: min(1180px, 88vw);
+      height: 500px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.12), transparent 18%),
+        radial-gradient(circle at 34% 70%, rgba(84,227,255,.14), transparent 24%),
+        radial-gradient(circle at 68% 72%, rgba(255,92,214,.12), transparent 24%);
+      filter: blur(2px);
+      opacity: .9;
+    }
+
+    #ai-creation-homepage .hero-copy {
+      text-align: left;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: start;
+      width: min(1120px, 76vw);
+      gap: 22px;
+    }
+
+    #ai-creation-homepage h1 {
+      margin: 0;
+      font-size: clamp(30px, 3vw, 42px);
+      line-height: 1.12;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    #ai-creation-homepage .gradient-text {
+      background: linear-gradient(90deg, #fff 0%, #d7e8ff 32%, #b89cff 65%, #68f0ff 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    #ai-creation-homepage .sub {
+      margin: 14px 0 22px;
+      color: #b7bac8;
+      font-size: 17px;
+      line-height: 1.72;
+      max-width: 700px;
+      display: none;
+    }
+
+    #ai-creation-homepage .prompt-box {
+      width: 100%;
+      min-height: 150px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,.18);
+      background:
+        radial-gradient(circle at 78% 70%, rgba(84,227,255,.2), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.05));
+      box-shadow: 0 22px 70px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.1);
+      padding: 22px 30px;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    #ai-creation-homepage .quick-prompts {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    #ai-creation-homepage .quick-pill {
+      height: 46px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 520;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      white-space: nowrap;
+    }
+
+    #ai-creation-homepage .quick-pill svg {
+      width: 19px;
+      height: 19px;
+      display: block;
+      color: #ffffff;
+    }
+
+    #ai-creation-homepage .prompt-box::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        linear-gradient(90deg, transparent, rgba(84,227,255,.08), transparent),
+        radial-gradient(circle at 82% 78%, rgba(84,227,255,.22), transparent 28%);
+      pointer-events: none;
+    }
+
+    #ai-creation-homepage .placeholder {
+      color: #7f8391;
+      font-size: 16px;
+      font-weight: 650;
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #ai-creation-homepage .prompt-actions {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      bottom: 20px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    #ai-creation-homepage .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+      min-width: 0;
+      flex: 1;
+      align-items: center;
+    }
+
+    #ai-creation-homepage .chip {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.055);
+      color: #f3f5fb;
+      border-radius: 999px;
+      padding: 0;
+      font-size: 21px;
+      font-weight: 650;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+    }
+
+    #ai-creation-homepage .chip.primary {
+      color: #f3f5fb;
+      font-size: 26px;
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.08);
+      box-shadow: none;
+    }
+
+    #ai-creation-homepage .model-select {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #f1f3f8;
+      font-size: 15px;
+      font-weight: 720;
+      white-space: nowrap;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    #ai-creation-homepage .model-select svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      margin-left: 2px;
+      color: #eef2f8;
+      flex: 0 0 auto;
+    }
+
+    #ai-creation-homepage .model-select strong {
+      color: #67dfff;
+      font-weight: 780;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    #ai-creation-homepage .generate-btn {
+      border: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      padding: 0;
+      color: #11131b;
+      font-weight: 800;
+      font-size: 0;
+      line-height: 1;
+      background: linear-gradient(135deg, #ffffff 0%, #c9fbff 46%, #cdb5ff 100%);
+      box-shadow: 0 0 24px rgba(120,214,255,.35), inset 0 1px 0 rgba(255,255,255,.72);
+      white-space: nowrap;
+      margin-left: 12px;
+      display: grid;
+      place-items: center;
+    }
+
+    #ai-creation-homepage .generate-btn svg {
+      width: 23px;
+      height: 23px;
+      display: block;
+    }
+
+    #ai-creation-homepage .showcase {
+      width: min(1260px, 100%);
+      height: 262px;
+      position: relative;
+      margin-top: 4px;
+      isolation: isolate;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent 0%, black 9%, black 91%, transparent 100%);
+    }
+
+    #ai-creation-homepage .showcase::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 104%;
+      height: 220px;
+      transform: translate(-50%, -48%);
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, rgba(84,227,255,.18), transparent 56%),
+        repeating-radial-gradient(ellipse at center, transparent 0 18px, rgba(255,255,255,.08) 19px 20px, transparent 21px 36px);
+      filter: blur(.2px);
+      opacity: .82;
+      z-index: -1;
+    }
+
+    #ai-creation-homepage .carousel-track {
+      width: max-content;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 0;
+      animation: carouselSlide 28s linear infinite;
+    }
+
+    #ai-creation-homepage .showcase:hover .carousel-track {
+      animation-play-state: paused;
+    }
+
+    #ai-creation-homepage .media-card {
+      position: relative;
+      flex: 0 0 auto;
+      width: 330px;
+      height: 206px;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.15);
+      background: var(--panel);
+      box-shadow: 0 28px 80px rgba(0,0,0,.36);
+      transform: none;
+      opacity: .92;
+    }
+
+    #ai-creation-homepage .media-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(7,8,12,.08) 0%, rgba(7,8,12,.14) 42%, rgba(0,0,0,.76) 100%),
+        radial-gradient(circle at 70% 30%, rgba(84,227,255,.22), transparent 34%),
+        var(--art);
+      background-size: auto, auto, cover;
+      background-position: center;
+    }
+
+    #ai-creation-homepage .media-card::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      font-size: 13px;
+      color: rgba(255,255,255,.88);
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(8,9,13,.58);
+      border: 1px solid rgba(255,255,255,.13);
+      backdrop-filter: blur(14px);
+    }
+
+    #ai-creation-homepage .card-a {
+      --art: url("https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .card-b {
+      --art: url("https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .card-c {
+      --art: url("https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .video-frame {
+      z-index: 3;
+      --art: url("https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .play {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 4;
+    }
+
+    #ai-creation-homepage .play span {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.24);
+      backdrop-filter: blur(16px);
+      font-size: 22px;
+    }
+
+    #ai-creation-homepage .card-d {
+      --art: url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .card-e {
+      --art: url("https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80");
+    }
+
+    #ai-creation-homepage .card-f {
+      --art: url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80");
+    }
+
+    @keyframes carouselSlide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    #ai-creation-homepage .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    #ai-creation-homepage h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    #ai-creation-homepage .see-more {
+      color: #cdd0dc;
+      font-size: 13px;
+    }
+
+    #ai-creation-homepage .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    #ai-creation-homepage .feature {
+      min-height: 132px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.11);
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #ai-creation-homepage .feature::after {
+      content: "";
+      position: absolute;
+      inset: auto -20px -46px 28%;
+      height: 90px;
+      border-radius: 999px;
+      background: var(--glow);
+      filter: blur(26px);
+      opacity: .48;
+    }
+
+    #ai-creation-homepage .feature .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.12);
+      margin-bottom: 17px;
+      font-size: 17px;
+    }
+
+    #ai-creation-homepage .feature b {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #ai-creation-homepage .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+
+    #ai-creation-homepage .gallery {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr 1fr 1fr;
+      gap: 14px;
+      min-height: 190px;
+    }
+
+    #ai-creation-homepage .work {
+      min-height: 190px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,.11);
+      background: var(--thumb);
+    }
+
+    #ai-creation-homepage .work::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.76));
+    }
+
+    #ai-creation-homepage .work span {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    #ai-creation-homepage .work small {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      #ai-creation-homepage { min-height: 1120px; }
+      #ai-creation-homepage .shell { grid-template-columns: 76px 1fr; min-height: 1120px; }
+      #ai-creation-homepage main { padding: 26px 22px; }
+      #ai-creation-homepage .topline { align-items: flex-start; gap: 12px; flex-direction: column; }
+      #ai-creation-homepage .hero { min-height: 760px; padding-top: 82px; gap: 62px; }
+      #ai-creation-homepage h1 { white-space: normal; }
+      #ai-creation-homepage .prompt-actions { position: relative; left: auto; right: auto; bottom: auto; margin-top: 44px; align-items: flex-start; flex-direction: column; }
+      #ai-creation-homepage .showcase { height: 250px; }
+      #ai-creation-homepage .media-card { width: 280px; height: 160px; }
+      #ai-creation-homepage .feature-grid,
+      #ai-creation-homepage .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #ai-creation-homepage .nav { margin-top: 64px; }
+    }
+  </style>
+
+  <div class="grain"></div>
+  <div class="wave"></div>
+  <div class="shell">
+    <aside class="sidebar" aria-label="侧边栏导航">
+      <div class="brand-slot" aria-label="icon展位"></div>
+      <nav class="nav">
+        <div class="nav-item active"><div class="nav-icon"></div><span>首页</span></div>
+        <div class="nav-item"><div class="nav-icon"></div><span>AI生成</span></div>
+        <div class="nav-item"><div class="nav-icon"></div><span>工作流</span></div>
+        <div class="nav-item"><div class="nav-icon"></div><span>我的</span></div>
+      </nav>
+      <div class="bottom-tools">
+        <div class="tiny-icon" aria-label="通知">◌</div>
+        <div class="avatar" aria-label="我的头像"></div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topline">
+        <div class="model-strip">
+          <span class="model-pill">图片生成</span>
+          <span class="model-pill hot">视频生成 <strong>Wan 3.0</strong></span>
+          <span class="model-pill">工作流</span>
+          <span class="model-pill">视频编辑</span>
+        </div>
+      </div>
+
+      <section class="hero" aria-label="首页核心生成模块">
+        <div class="hero-copy">
+          <h1><span class="gradient-text">一句想法</span>生成图片与视频</h1>
+          <div class="prompt-box">
+            <div class="placeholder">描述你想创作的画面，例如：未来感护肤品广告，水面反光，8 秒电影镜头...</div>
+            <div class="prompt-actions">
+              <div class="chips">
+                <span class="chip primary">＋</span>
+                <span class="chip">@</span>
+              </div>
+              <div class="model-select">
+                <span>模型</span>
+                <strong>Wan3.0</strong>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <button class="generate-btn" aria-label="上传生成">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 19V6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M6.5 12L12 6.5L17.5 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="quick-prompts" aria-label="快捷创作类型">
+            <div class="quick-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16v11H4zM7 5h10" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13l3-2v4z" fill="currentColor"/></svg>
+              故事短片
+            </div>
+            <div class="quick-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="2.3"/><circle cx="16" cy="16" r="2.2" fill="none" stroke="currentColor" stroke-width="2.3"/></svg>
+              音乐 MV
+            </div>
+            <div class="quick-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 2.1 3-.1 1.1 2.8 2.6 1.6-.9 2.9.9 2.9-2.6 1.6-1.1 2.8-3-.1L12 21l-2.1-2.1-3 .1-1.1-2.8-2.6-1.6.9-2.9-.9-2.9 2.6-1.6L6.9 5l3 .1z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>
+              动态漫剧
+            </div>
+            <div class="quick-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10.5" r="2.3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7.5 17c1-2.2 2.5-3.2 4.5-3.2s3.5 1 4.5 3.2M18.4 4.2v3.2M16.8 5.8H20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              角色设计
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase" aria-label="图片视频翻页轮播，鼠标悬停暂停">
+          <div class="carousel-track">
+            <div class="media-card card-a" data-label="AI 人像海报"></div>
+            <div class="media-card video-frame" data-label="8s 视频预览">
+              <div class="play"><span>▶</span></div>
+            </div>
+            <div class="media-card card-b" data-label="产品图生成"></div>
+            <div class="media-card card-c" data-label="分镜转视频"></div>
+            <div class="media-card card-d" data-label="品牌海报套系"></div>
+            <div class="media-card card-e" data-label="音乐 MV 分镜"></div>
+            <div class="media-card card-f" data-label="角色设定图"></div>
+            <div class="media-card card-a" data-label="AI 人像海报"></div>
+            <div class="media-card video-frame" data-label="8s 视频预览">
+              <div class="play"><span>▶</span></div>
+            </div>
+            <div class="media-card card-b" data-label="产品图生成"></div>
+            <div class="media-card card-c" data-label="分镜转视频"></div>
+            <div class="media-card card-d" data-label="品牌海报套系"></div>
+            <div class="media-card card-e" data-label="音乐 MV 分镜"></div>
+            <div class="media-card card-f" data-label="角色设定图"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-title">
+        <h2>核心创作能力</h2>
+        <span class="see-more">查看全部 ›</span>
+      </div>
+      <section class="feature-grid" aria-label="核心创作能力">
+        <article class="feature" style="--glow: rgba(84,227,255,.9);">
+          <div class="icon">▧</div>
+          <b>图片生成</b>
+          <p>海报、头像、商品图、概念场景，支持参考图与风格一致。</p>
+        </article>
+        <article class="feature" style="--glow: rgba(154,108,255,.9);">
+          <div class="icon">▶</div>
+          <b>视频生成</b>
+          <p>文生视频、图生视频、镜头运动与短片分镜一站完成。</p>
+        </article>
+        <article class="feature" style="--glow: rgba(255,92,214,.88);">
+          <div class="icon">✎</div>
+          <b>智能编辑</b>
+          <p>局部重绘、扩图、换背景、换装、去物体，保留创意控制。</p>
+        </article>
+        <article class="feature" style="--glow: rgba(99,243,176,.82);">
+          <div class="icon">⌁</div>
+          <b>工作流</b>
+          <p>把常用提示词、模型、素材和发布规格组合成自动流程。</p>
+        </article>
+      </section>
+
+      <div class="section-title">
+        <h2>灵感作品流</h2>
+        <span class="see-more">进入社区 ›</span>
+      </div>
+      <section class="gallery" aria-label="灵感作品流">
+        <article class="work" style="--thumb: radial-gradient(circle at 68% 30%, #d7f8ff 0 9%, transparent 10%), linear-gradient(135deg,#112235,#3151ff 46%,#5cf4c8);"><span>电商主图大片<small>商品图生成 · 一键扩展比例</small></span></article>
+        <article class="work" style="--thumb: radial-gradient(circle at 52% 40%, #ffc6d9 0 13%, transparent 14%), linear-gradient(135deg,#2a1018,#a52662 48%,#ffb366);"><span>国风角色短片<small>角色一致性 · 视频生成</small></span></article>
+        <article class="work" style="--thumb: repeating-linear-gradient(110deg, rgba(255,255,255,.12) 0 2px, transparent 2px 28px), linear-gradient(135deg,#16121e,#4d2ca8 48%,#56e8ff);"><span>音乐 MV 分镜<small>工作流 · 批量出片</small></span></article>
+        <article class="work" style="--thumb: radial-gradient(circle at 44% 46%, #fff6bc 0 11%, transparent 12%), linear-gradient(135deg,#10201c,#237c65 42%,#d8ff80);"><span>品牌海报套系<small>模板生成 · 多尺寸交付</small></span></article>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function () {
+      const root = document.getElementById("ai-creation-homepage");
+      const state = { glow: "#54e3ff", density: "标准" };
+
+      function render() {
+        root.style.setProperty("--cyan", state.glow);
+        root.dataset.density = state.density;
+      }
+
+      render();
+
+      if (globalThis.Tweak) {
+        const tweak = new Tweak({ container: root, onChange: render });
+        tweak.addColorPicker(state, "glow", { label: "主高光色", reference: "--cyan" });
+        tweak.addSelect(state, "density", { label: "信息密度", options: ["标准", "紧凑"] });
+      }
+    })();
+  </script>
+</div>
