@@ -32,7 +32,7 @@
         radial-gradient(circle at 36% 14%, rgba(93, 112, 255, .22), transparent 24%),
         radial-gradient(circle at 76% 18%, rgba(255, 92, 214, .13), transparent 22%),
         linear-gradient(180deg, #090a0f 0%, #07080b 58%, #0b0c11 100%);
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
       border-radius: 0;
       box-shadow: none;
@@ -69,16 +69,18 @@
 
     #ai-creation-homepage .shell {
       position: relative;
-      display: grid;
-      grid-template-columns: 92px 1fr;
       min-height: 760px;
       z-index: 1;
     }
 
     #ai-creation-homepage .sidebar {
-      position: sticky;
+      position: fixed;
+      z-index: 20;
+      left: 0;
       top: 0;
-      min-height: 100vh;
+      bottom: 0;
+      width: 92px;
+      height: 100vh;
       border-right: 1px solid rgba(255,255,255,.08);
       background: rgba(10,11,16,.72);
       backdrop-filter: blur(18px);
@@ -185,6 +187,7 @@
     }
 
     #ai-creation-homepage main {
+      margin-left: 92px;
       padding: 34px 44px 30px 48px;
       display: flex;
       flex-direction: column;
@@ -706,8 +709,9 @@
 
     @media (max-width: 900px) {
       #ai-creation-homepage { min-height: 1120px; }
-      #ai-creation-homepage .shell { grid-template-columns: 76px 1fr; min-height: 1120px; }
-      #ai-creation-homepage main { padding: 26px 22px; }
+      #ai-creation-homepage .shell { min-height: 1120px; }
+      #ai-creation-homepage .sidebar { width: 76px; }
+      #ai-creation-homepage main { margin-left: 76px; padding: 26px 22px; }
       #ai-creation-homepage .topline { align-items: flex-start; gap: 12px; flex-direction: column; }
       #ai-creation-homepage .hero { min-height: 760px; padding-top: 82px; gap: 62px; }
       #ai-creation-homepage h1 { white-space: normal; }
