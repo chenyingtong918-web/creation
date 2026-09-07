@@ -29,9 +29,10 @@
       min-height: 100vh;
       color: var(--text);
       background:
-        radial-gradient(circle at 36% 14%, rgba(93, 112, 255, .22), transparent 24%),
-        radial-gradient(circle at 76% 18%, rgba(255, 92, 214, .13), transparent 22%),
-        linear-gradient(180deg, #090a0f 0%, #07080b 58%, #0b0c11 100%);
+        radial-gradient(ellipse 72% 38% at 45% 14%, rgba(67, 119, 200, .17), transparent 72%),
+        radial-gradient(ellipse 58% 42% at 78% 18%, rgba(184, 65, 142, .11), transparent 74%),
+        radial-gradient(ellipse 46% 34% at 61% 31%, rgba(49, 166, 179, .07), transparent 76%),
+        linear-gradient(118deg, #080a11 0%, #0a0e19 34%, #100e17 67%, #0d0910 100%);
       overflow-x: hidden;
       position: relative;
       border-radius: 0;
@@ -40,31 +41,75 @@
 
     #ai-creation-homepage * { box-sizing: border-box; }
 
+    #ai-creation-homepage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(3,4,8,.06) 0%, rgba(3,4,8,0) 23%, rgba(3,4,8,.22) 58%, rgba(3,4,8,.66) 100%),
+        linear-gradient(90deg, rgba(8,10,17,.42), transparent 18%, transparent 82%, rgba(8,7,12,.36));
+    }
+
     #ai-creation-homepage .grain {
       position: absolute;
       inset: 0;
-      opacity: .34;
+      z-index: 0;
+      opacity: .26;
       pointer-events: none;
       background-image:
+        radial-gradient(circle, rgba(255,255,255,.16) 0 .55px, transparent .7px),
         linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: radial-gradient(circle at 55% 16%, black, transparent 58%);
+      background-size: 17px 17px, 42px 42px, 42px 42px;
+      background-position: 5px 9px, 0 0, 0 0;
+      mask-image: radial-gradient(ellipse 82% 42% at 55% 18%, black, rgba(0,0,0,.58) 54%, transparent 88%);
     }
 
     #ai-creation-homepage .wave {
       position: absolute;
       left: 128px;
       right: 24px;
-      top: 18px;
-      height: 420px;
-      opacity: .56;
+      top: 28px;
+      height: 470px;
+      z-index: 0;
+      opacity: .66;
       pointer-events: none;
       background:
-        repeating-radial-gradient(ellipse at 50% 52%, transparent 0 21px, rgba(130,144,255,.18) 22px 24px, transparent 25px 42px);
-      transform: perspective(800px) rotateX(62deg) scaleY(.74);
-      filter: blur(.2px);
-      mask-image: linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+        repeating-radial-gradient(ellipse at 50% 51%, transparent 0 23px, rgba(137,151,255,.16) 24px 25px, transparent 26px 45px);
+      transform: perspective(860px) rotateX(61deg) scaleY(.77);
+      filter: blur(.15px);
+      mask-image:
+        linear-gradient(90deg, transparent 0%, black 13%, black 87%, transparent 100%),
+        linear-gradient(180deg, transparent 1%, black 22%, black 72%, transparent 100%);
+      mask-composite: intersect;
+    }
+
+    #ai-creation-homepage .wave::before,
+    #ai-creation-homepage .wave::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    #ai-creation-homepage .wave::before {
+      inset: 56px 6% 18px;
+      opacity: .7;
+      background:
+        repeating-radial-gradient(ellipse at 52% 48%, transparent 0 38px, rgba(68,214,224,.09) 39px 40px, transparent 41px 76px);
+      transform: scaleX(1.08);
+      filter: blur(.35px);
+    }
+
+    #ai-creation-homepage .wave::after {
+      left: 12%;
+      right: 12%;
+      top: 46%;
+      height: 2px;
+      opacity: .7;
+      background: linear-gradient(90deg, transparent, rgba(117,151,255,.14) 24%, rgba(96,214,221,.16) 52%, rgba(219,104,184,.12) 76%, transparent);
+      filter: blur(1px);
     }
 
     #ai-creation-homepage .shell {
@@ -246,11 +291,11 @@
       transform: translateX(-50%);
       pointer-events: none;
       background:
-        radial-gradient(circle at 50% 20%, rgba(255,255,255,.12), transparent 18%),
-        radial-gradient(circle at 34% 70%, rgba(84,227,255,.14), transparent 24%),
-        radial-gradient(circle at 68% 72%, rgba(255,92,214,.12), transparent 24%);
-      filter: blur(2px);
-      opacity: .9;
+        radial-gradient(ellipse 40% 28% at 50% 20%, rgba(255,255,255,.08), transparent 78%),
+        radial-gradient(ellipse 42% 36% at 34% 70%, rgba(70,190,211,.1), transparent 80%),
+        radial-gradient(ellipse 44% 34% at 70% 70%, rgba(197,77,156,.085), transparent 82%);
+      filter: blur(8px);
+      opacity: .78;
     }
 
     #ai-creation-homepage .hero-copy {
@@ -292,8 +337,8 @@
       border-radius: 28px;
       border: 1px solid rgba(255,255,255,.18);
       background:
-        radial-gradient(circle at 78% 70%, rgba(84,227,255,.2), transparent 28%),
-        linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.05));
+        linear-gradient(105deg, rgba(255,255,255,.09) 0%, rgba(93,112,174,.105) 38%, rgba(67,157,176,.14) 68%, rgba(139,77,130,.09) 100%),
+        rgba(255,255,255,.035);
       box-shadow: 0 22px 70px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.1);
       padding: 22px 30px;
       position: relative;
@@ -337,8 +382,8 @@
       position: absolute;
       inset: -1px;
       background:
-        linear-gradient(90deg, transparent, rgba(84,227,255,.08), transparent),
-        radial-gradient(circle at 82% 78%, rgba(84,227,255,.22), transparent 28%);
+        linear-gradient(100deg, transparent 8%, rgba(113,145,220,.055) 38%, rgba(78,205,210,.09) 68%, rgba(218,104,177,.05) 90%, transparent),
+        linear-gradient(180deg, rgba(255,255,255,.035), transparent 46%);
       pointer-events: none;
     }
 
