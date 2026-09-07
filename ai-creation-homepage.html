@@ -174,77 +174,9 @@
       justify-items: center;
     }
 
-    #ai-creation-homepage .member-card {
-      width: 70px;
-      min-height: 58px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.13);
-      background: rgba(255,255,255,.045);
-      color: #f4f5f8;
-      display: grid;
-      place-items: center;
-      padding: 8px 6px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
-      text-align: center;
-    }
-
-    #ai-creation-homepage .member-card strong {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
-      line-height: 1;
-      font-weight: 650;
-    }
-
-    #ai-creation-homepage .member-card strong::before {
-      content: "*";
-      font-size: 26px;
-      line-height: .7;
-      font-weight: 800;
-    }
-
-    #ai-creation-homepage .member-card span {
-      display: block;
-      margin-top: 7px;
-      font-size: 13px;
-      line-height: 1;
-      font-weight: 500;
-    }
-
-    #ai-creation-homepage .utility-button {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.035);
-      color: #8f939f;
-      position: relative;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
-    }
-
-    #ai-creation-homepage .utility-button::before {
-      content: "";
-      position: absolute;
-      left: 9px;
-      top: 8px;
-      width: 14px;
-      height: 15px;
-      border: 2px solid currentColor;
-      border-bottom: 0;
-      border-radius: 8px 8px 5px 5px;
-    }
-
-    #ai-creation-homepage .utility-button::after {
-      content: "";
-      position: absolute;
-      left: 12px;
-      bottom: 8px;
-      width: 10px;
-      height: 5px;
-      border-bottom: 2px solid currentColor;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 4px 3px 0 -3px currentColor;
+    #ai-creation-homepage .bottom-slot {
+      color: #777b88;
+      flex: 0 0 auto;
     }
 
     #ai-creation-homepage .avatar {
@@ -252,11 +184,8 @@
       height: 38px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,.22);
-      background:
-        radial-gradient(circle at 35% 28%, #ffe2a6 0 17%, transparent 18%),
-        radial-gradient(circle at 62% 58%, #ff68c9 0 15%, transparent 16%),
-        linear-gradient(135deg, #35e6d1, #795dff 56%, #ffb15c);
-      box-shadow: 0 0 18px rgba(154,108,255,.34);
+      background: #24262d url("./assets/avatar/01-human-avatar-136.jpg") center / cover no-repeat;
+      box-shadow: 0 4px 14px rgba(0,0,0,.36);
     }
 
     #ai-creation-homepage main {
@@ -692,29 +621,30 @@
 
     #ai-creation-homepage .feature {
       min-height: 168px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.11);
-      background:
-        linear-gradient(180deg, rgba(5,6,10,.02) 0%, rgba(5,6,10,.16) 50%, rgba(5,6,10,.82) 100%),
-        var(--image);
-      background-size: cover;
+      border-radius: 14px;
+      border: 0;
+      background: #0b0c11 var(--image) center / cover no-repeat;
       background-position: center;
       padding: 18px;
       position: relative;
-      overflow: hidden;
+      overflow: clip;
+      clip-path: inset(0 round 14px);
       isolation: isolate;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 56px rgba(0,0,0,.26);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.11), 0 18px 56px rgba(0,0,0,.26);
     }
 
-    #ai-creation-homepage .feature::after {
+    #ai-creation-homepage .feature::before {
       content: "";
       position: absolute;
-      inset: -1px;
+      inset: 0;
       border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255,255,255,.14), transparent 32%, rgba(0,0,0,.24));
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.12), transparent 32%, rgba(0,0,0,.2)),
+        linear-gradient(180deg, rgba(5,6,10,.02) 0%, rgba(5,6,10,.16) 50%, rgba(5,6,10,.84) 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.11);
       pointer-events: none;
     }
 
@@ -762,17 +692,15 @@
     #ai-creation-homepage .template-card,
     #ai-creation-homepage .news-card {
       min-height: 250px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      overflow: hidden;
+      border-radius: 14px;
+      border: 0;
+      overflow: clip;
+      clip-path: inset(0 round 14px);
       position: relative;
       isolation: isolate;
-      background:
-        linear-gradient(180deg, rgba(4,5,9,.02) 0%, rgba(4,5,9,.08) 42%, rgba(4,5,9,.8) 100%),
-        var(--image);
-      background-size: cover;
+      background: #0b0c11 var(--image) center / cover no-repeat;
       background-position: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 56px rgba(0,0,0,.28);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 18px 56px rgba(0,0,0,.28);
     }
 
     #ai-creation-homepage .template-card.large {
@@ -783,9 +711,12 @@
     #ai-creation-homepage .news-card::after {
       content: "";
       position: absolute;
-      inset: -1px;
+      inset: 0;
       border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent 42%);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.1), transparent 42%),
+        linear-gradient(180deg, rgba(4,5,9,.02) 0%, rgba(4,5,9,.08) 42%, rgba(4,5,9,.82) 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
       pointer-events: none;
     }
 
@@ -847,17 +778,15 @@
 
     #ai-creation-homepage .work {
       min-height: 220px;
-      border-radius: 18px;
-      overflow: hidden;
+      border-radius: 14px;
+      overflow: clip;
+      clip-path: inset(0 round 14px);
       position: relative;
       isolation: isolate;
-      border: 1px solid rgba(255,255,255,.11);
-      background:
-        linear-gradient(180deg, rgba(5,6,10,0) 20%, rgba(5,6,10,.1) 52%, rgba(0,0,0,.8) 100%),
-        var(--thumb);
-      background-size: cover;
+      border: 0;
+      background: #0b0c11 var(--thumb) center / cover no-repeat;
       background-position: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.11);
     }
 
     #ai-creation-homepage .work.wide {
@@ -867,9 +796,12 @@
     #ai-creation-homepage .work::before {
       content: "";
       position: absolute;
-      inset: -1px;
+      inset: 0;
       border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255,255,255,.1), transparent 40%);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.09), transparent 40%),
+        linear-gradient(180deg, rgba(5,6,10,0) 20%, rgba(5,6,10,.1) 52%, rgba(0,0,0,.82) 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.11);
     }
 
     #ai-creation-homepage .work span {
@@ -894,7 +826,6 @@
       #ai-creation-homepage .shell { min-height: 1120px; }
       #ai-creation-homepage .sidebar { width: 76px; }
       #ai-creation-homepage main { margin-left: 76px; padding: 26px 22px; }
-      #ai-creation-homepage .member-card { width: 64px; }
       #ai-creation-homepage .topline { align-items: flex-start; gap: 12px; flex-direction: column; }
       #ai-creation-homepage .hero { min-height: 760px; padding-top: 82px; gap: 62px; }
       #ai-creation-homepage h1 { white-space: normal; }
@@ -923,8 +854,7 @@
         <div class="nav-item"><div class="nav-icon"></div><span>我的</span></div>
       </nav>
       <div class="bottom-tools">
-        <div class="member-card" aria-label="开通会员"><strong>40</strong><span>开通会员</span></div>
-        <div class="utility-button" aria-label="通知"></div>
+        <div class="nav-icon bottom-slot" aria-label="功能占位"></div>
         <div class="avatar" aria-label="我的头像"></div>
       </div>
     </aside>
