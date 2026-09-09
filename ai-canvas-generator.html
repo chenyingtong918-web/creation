@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 节点式画布生成器</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #090b0c;
+        color: #f4f8f8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        overflow: hidden;
+        background: #090b0c;
+      }
+
+      button,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr);
+        height: 100vh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 80% 12%, rgba(62, 211, 193, 0.16), transparent 28%),
+          linear-gradient(135deg, #0b0d0f 0%, #121415 54%, #090a0b 100%);
+      }
+
+      .nav-rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 20px 10px;
+        background: rgba(8, 10, 11, 0.78);
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 46px;
+        height: 46px;
+        place-items: center;
+        border-radius: 14px;
+        color: #edfffb;
+        background: linear-gradient(135deg, rgba(72, 232, 214, 0.18), rgba(255, 255, 255, 0.08));
+        font-size: 26px;
+      }
+
+      .nav-list {
+        display: grid;
+        gap: 18px;
+        margin-top: 82px;
+      }
+
+      .nav-button {
+        display: grid;
+        width: 62px;
+        min-height: 62px;
+        place-items: center;
+        gap: 5px;
+        border: 0;
+        border-radius: 12px;
+        color: rgba(228, 231, 232, 0.55);
+        background: transparent;
+        font-size: 12px;
+      }
+
+      .nav-button.is-active {
+        color: #61f3df;
+        background: rgba(97, 243, 223, 0.09);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-rows: 64px minmax(0, 1fr);
+        min-width: 0;
+      }
+
+      .top-bar {
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0 22px;
+        background: rgba(13, 15, 16, 0.84);
+        backdrop-filter: blur(18px);
+      }
+
+      .tabs,
+      .top-actions,
+      .zoom-control {
+        display: flex;
+        align-items: center;
+      }
+
+      .tabs {
+        gap: 22px;
+      }
+
+      .tab {
+        position: relative;
+        border: 0;
+        padding: 20px 2px;
+        color: rgba(235, 239, 239, 0.52);
+        background: transparent;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .tab.is-active {
+        color: white;
+      }
+
+      .tab.is-active::after {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        border-radius: 999px;
+        background: #082dff;
+        content: "";
+      }
+
+      .top-actions {
+        gap: 10px;
+      }
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      .ghost-action,
+      .icon-action,
+      .zoom-control {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.055);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      .ghost-action,
+      .icon-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        border-radius: 10px;
+        padding: 0 13px;
+        color: rgba(245, 248, 248, 0.84);
+      }
+
+      .icon-action {
+        width: 42px;
+        padding: 0;
+      }
+
+      .zoom-control {
+        gap: 8px;
+        min-height: 40px;
+        border-radius: 10px;
+        padding: 0 8px;
+        color: rgba(245, 248, 248, 0.82);
+      }
+
+      .zoom-control button {
+        width: 27px;
+        height: 27px;
+        border: 0;
+        color: inherit;
+        background: transparent;
+      }
+
+      .infinite-canvas {
+        position: relative;
+        overflow: hidden;
+        cursor: grab;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          radial-gradient(circle at 48% 42%, rgba(111, 105, 238, 0.11), transparent 34%),
+          #0f1213;
+        background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px, auto, auto;
+      }
+
+      .infinite-canvas.is-panning {
+        cursor: grabbing;
+      }
+
+      .empty-launch {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        z-index: 2;
+        display: grid;
+        justify-items: center;
+        width: min(720px, calc(100% - 40px));
+        transform: translate(-50%, -50%);
+      }
+
+      .launch-options {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 206px));
+        gap: 12px;
+      }
+
+      .launch-card {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        height: 156px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 8px;
+        padding: 18px;
+        color: rgba(238, 241, 244, 0.82);
+        background: rgba(24, 27, 28, 0.88);
+        box-shadow: 0 16px 42px rgba(0, 0, 0, 0.28);
+        text-align: left;
+        transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .launch-card:hover {
+        border-color: rgba(255, 255, 255, 0.22);
+        color: white;
+        background: rgba(30, 34, 35, 0.96);
+        box-shadow: 0 20px 52px rgba(0, 0, 0, 0.36);
+        transform: translateY(-2px);
+      }
+
+      .launch-icon {
+        display: grid;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        color: #ffffff;
+      }
+
+      .launch-icon svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+      .launch-copy { display: flex; margin-top: auto; flex-direction: column; gap: 5px; }
+      .launch-copy strong { color: rgba(248, 250, 250, 0.9); font-size: 16px; font-weight: 700; }
+      .launch-copy small { color: rgba(238, 242, 242, 0.42); font-size: 12px; line-height: 1.4; }
+
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #082dff;
+        box-shadow: 0 0 0 5px rgba(8, 45, 255, 0.16);
+      }
+
+      .canvas-world {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 1400px;
+        height: 760px;
+        transform-origin: center;
+      }
+
+      .compose-node,
+      .add-menu {
+        position: absolute;
+        z-index: 3;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 22px;
+        color: rgba(245, 248, 248, 0.86);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.035)),
+          rgba(22, 24, 25, 0.92);
+        box-shadow: 0 26px 90px rgba(0, 0, 0, 0.46);
+        backdrop-filter: blur(22px);
+      }
+
+      .compose-node {
+        width: 480px;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .branch-node {
+        width: 500px;
+      }
+
+      .node-label {
+        position: absolute;
+        top: -34px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        color: rgba(235, 239, 239, 0.58);
+        font-size: 14px;
+      }
+
+      .node-label strong {
+        color: rgba(235, 239, 239, 0.72);
+      }
+
+      .compose-body {
+        position: relative;
+        display: grid;
+        min-height: 360px;
+        align-content: end;
+        gap: 18px;
+        padding: 34px 28px 28px;
+      }
+
+      .primary-compose-body {
+        display: block;
+        padding: 0;
+      }
+
+      .prompt-shell {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        left: 18px;
+        height: 158px;
+        border: 1px solid rgba(255, 255, 255, 0.055);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .prompt-shell .reference-button { position: absolute; top: 16px; left: 16px; }
+
+      .compose-body textarea {
+        min-height: 72px;
+        resize: none;
+        border: 0;
+        outline: 0;
+        color: rgba(255, 255, 255, 0.84);
+        background: transparent;
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .compose-body textarea::placeholder {
+        color: rgba(255, 255, 255, 0.36);
+      }
+
+      .prompt-shell textarea {
+        position: absolute;
+        right: 76px;
+        bottom: 14px;
+        left: 16px;
+        min-height: 52px;
+        height: 52px;
+        padding: 9px 0;
+        scrollbar-width: none;
+      }
+
+      .prompt-shell textarea::-webkit-scrollbar { display: none; }
+
+      .reference-button,
+      .send-button,
+      .add-node-button {
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        color: rgba(255, 255, 255, 0.88);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .reference-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        border-style: dashed;
+        border-radius: 13px;
+        font-size: 34px;
+        line-height: 1;
+        padding: 0;
+      }
+
+      .reference-button .plus-glyph { display: block; line-height: 1; transform: translateY(-1px); }
+
+      .inline-reference {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+
+      .send-button {
+        position: absolute;
+        right: 24px;
+        bottom: 32px;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        border-radius: 12px;
+        color: #ffffff;
+        background: #082dff;
+        font-size: 22px;
+        z-index: 1;
+      }
+
+      .prompt-shell .send-button { right: 16px; bottom: 16px; }
+
+      .send-button:disabled {
+        cursor: wait;
+        opacity: 0.78;
+      }
+
+      .node-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 13px 16px;
+        background: rgba(0, 0, 0, 0.16);
+      }
+
+      .compose-node:not(.branch-node) > .node-toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      }
+
+      .node-toolbar button {
+        min-height: 34px;
+        border: 0;
+        border-radius: 8px;
+        padding: 0 10px;
+        color: rgba(255, 255, 255, 0.68);
+        background: rgba(255, 255, 255, 0.055);
+        white-space: nowrap;
+      }
+
+      .node-toolbar .selector-control {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        min-width: 0;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 700;
+        min-height: 40px;
+      }
+
+      .node-toolbar .selector-control span { overflow: visible; text-overflow: clip; }
+      .compose-node:not(.branch-node) > .node-toolbar .selector-control:first-child { gap: 8px; }
+      .compose-node:not(.branch-node) > .node-toolbar .selector-control:first-child::before { color: #6f87ff; content: "✦"; font-size: 17px; line-height: 1; }
+      .node-toolbar .selector-control:not(:disabled):hover,
+      .node-toolbar .selector-control.is-open { color: white; background: rgba(8, 45, 255, 0.16); }
+      .node-toolbar .selector-control:disabled { cursor: not-allowed; opacity: 0.72; }
+      .generated-preview,
+      .inline-reference { user-select: none; -webkit-user-drag: none; }
+
+      .settings-popover {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        z-index: 8;
+        width: 480px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 18px;
+        padding: 18px;
+        background: rgba(27, 29, 30, 0.98);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+        cursor: default;
+      }
+
+      .popover-heading { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+      .popover-heading strong { color: rgba(255, 255, 255, 0.92); font-size: 16px; }
+      .popover-heading span,
+      .model-copy small { color: rgba(255, 255, 255, 0.42); font-size: 12px; }
+      .model-list { display: grid; gap: 4px; }
+      .model-option { display: grid; grid-template-columns: 42px minmax(0, 1fr) 20px; align-items: center; gap: 12px; width: 100%; border: 0; border-radius: 12px; padding: 9px; color: rgba(255, 255, 255, 0.84); background: transparent; text-align: left; }
+      .model-option:hover,
+      .model-option.is-selected { background: rgba(255, 255, 255, 0.06); }
+      .model-badge,
+      .model-badge.cyan,
+      .model-badge.blue,
+      .model-badge.pink { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; color: white; background: #082dff; }
+      .model-copy { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+      .model-copy strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+      .parameter-popover { display: grid; gap: 18px; }
+      .parameter-popover.is-hidden { display: none; }
+      .parameter-popover fieldset { min-width: 0; border: 0; padding: 0; }
+      .parameter-popover legend { margin-bottom: 9px; color: rgba(255, 255, 255, 0.48); font-size: 13px; }
+      .segmented-options,
+      .ratio-options { display: grid; gap: 4px; border-radius: 12px; padding: 4px; background: rgba(255, 255, 255, 0.035); }
+      .three-columns { grid-template-columns: repeat(3, 1fr); }
+      .four-columns { grid-template-columns: repeat(4, 1fr); }
+      .ratio-options { grid-template-columns: repeat(7, 1fr); }
+      .segmented-options button,
+      .ratio-options button { min-height: 44px; border: 0; border-radius: 9px; color: rgba(255, 255, 255, 0.7); background: transparent; }
+      .segmented-options button.is-selected,
+      .ratio-options button.is-selected { color: white; background: rgba(255, 255, 255, 0.1); }
+      .ratio-options button { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px; padding: 5px 2px; font-size: 11px; }
+      .ratio-options i { display: block; width: 15px; height: 15px; border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 2px; }
+
+      .generation-surface {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: none;
+        overflow: hidden;
+        background: #15191a;
+      }
+
+      .generated-preview {
+        display: none;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 42% 46%;
+        animation: image-reveal 420ms ease-out both;
+      }
+
+      .compose-node.has-output {
+        overflow: hidden;
+      }
+
+      .compose-node.has-output .generation-surface {
+        display: block;
+      }
+
+      .compose-node.has-result .generated-preview,
+      .compose-node.is-generating .generation-loading {
+        display: block;
+      }
+
+      .compose-node.has-output .compose-body {
+        display: none;
+      }
+
+      .compose-node.is-generating .node-toolbar { pointer-events: none; }
+
+      .generation-loading {
+        position: absolute;
+        inset: 0;
+        display: none;
+        place-items: center;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 44%, rgba(8, 45, 255, 0.16), transparent 34%), #111216;
+      }
+
+      .compose-node.is-generating .generation-loading {
+        display: grid;
+      }
+
+      .generation-loading::before {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+        background-size: 18px 18px;
+        content: "";
+        opacity: 0.36;
+      }
+
+      .scan-light {
+        position: absolute;
+        inset: -30% -60%;
+        background: linear-gradient(105deg, transparent 42%, rgba(8, 45, 255, 0.2) 50%, transparent 58%);
+        animation: scan 1.8s ease-in-out infinite;
+      }
+
+      .loading-status {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 9px;
+      }
+
+      .loading-spinner {
+        width: 28px;
+        height: 28px;
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        border-top-color: #082dff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      .loading-status strong { margin-top: 5px; font-size: 17px; }
+      .loading-status span { color: rgba(245, 250, 249, 0.46); font-size: 13px; }
+
+      .loading-progress {
+        position: absolute;
+        right: 24px;
+        bottom: 22px;
+        left: 24px;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .loading-progress span {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: #082dff;
+        transform-origin: left;
+        animation: generate-progress 5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+
+      @keyframes generate-progress {
+        from { transform: scaleX(0.02); }
+        to { transform: scaleX(1); }
+      }
+
+      @keyframes scan {
+        from { transform: translateX(-30%); }
+        to { transform: translateX(30%); }
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      @keyframes image-reveal {
+        from { opacity: 0; transform: scale(1.025); filter: blur(8px); }
+        to { opacity: 1; transform: scale(1); filter: blur(0); }
+      }
+
+      .node-link {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 1400px;
+        height: 760px;
+        pointer-events: none;
+      }
+
+      .node-link path {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.28);
+        stroke-width: 1.4;
+      }
+
+      .add-node-zone {
+        position: absolute;
+        z-index: 4;
+      }
+
+      .add-node-button {
+        width: 48px;
+        height: 48px;
+        border-style: dashed;
+        border-radius: 14px;
+      }
+
+      .add-node-button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+
+      .add-menu {
+        top: -110px;
+        left: 72px;
+        width: 340px;
+        overflow: hidden;
+        border-radius: 18px;
+      }
+
+      .add-menu-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+        padding: 17px 18px;
+        color: white;
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .add-menu-title button {
+        border: 0;
+        color: rgba(255, 255, 255, 0.7);
+        background: transparent;
+        font-size: 24px;
+      }
+
+      .add-menu > button {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 12px;
+        width: 100%;
+        border: 0;
+        padding: 12px 18px;
+        color: rgba(255, 255, 255, 0.86);
+        background: transparent;
+        text-align: left;
+      }
+
+      .add-menu > button:hover {
+        background: rgba(8, 45, 255, 0.14);
+      }
+
+      .add-menu-icon {
+        align-self: center;
+        width: 27px;
+        height: 27px;
+        fill: none;
+        stroke: #ffffff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+        transform: translateX(4px);
+      }
+
+      .add-menu > button span {
+        display: grid;
+        gap: 2px;
+      }
+
+      .add-menu small {
+        color: rgba(255, 255, 255, 0.46);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .canvas-new-creation {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+        z-index: 12;
+      }
+
+      .canvas-add-button {
+        display: grid;
+        width: 46px;
+        height: 46px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        color: #ffffff;
+        background: #082dff;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+      }
+
+      .canvas-add-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+
+      .canvas-add-button:hover { background: #3154ff; }
+
+      .new-creation-menu {
+        top: auto;
+        right: 0;
+        bottom: calc(100% + 12px);
+        left: auto;
+        width: 292px;
+      }
+
+      .new-creation-menu .add-menu-title { padding: 14px 16px; font-size: 16px; }
+      .new-creation-menu > button { grid-template-columns: 38px 1fr; gap: 10px; padding: 10px 14px; }
+
+      @media (max-width: 960px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-rail {
+          display: none;
+        }
+
+        .top-bar {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 14px 16px;
+        }
+
+        .top-actions {
+          overflow-x: auto;
+          width: 100%;
+          padding-bottom: 3px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .launch-options {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          width: min(360px, calc(100vw - 40px));
+        }
+
+        .launch-card {
+          align-items: center;
+          flex-direction: row;
+          height: 86px;
+          gap: 14px;
+        }
+
+        .launch-copy { margin-top: 0; }
+
+        .compose-body {
+          min-height: 300px;
+          padding: 24px 22px;
+        }
+
+        .canvas-new-creation { right: 16px; bottom: 16px; }
+        .new-creation-menu { top: auto; right: 0; bottom: calc(100% + 10px); left: auto; }
+
+      }
+
+      .app-shell {
+        display: block;
+        height: 100dvh;
+        background:
+          radial-gradient(ellipse 68% 48% at 46% 18%, rgba(8, 45, 255, 0.12), transparent 72%),
+          radial-gradient(ellipse 54% 46% at 78% 20%, rgba(8, 45, 255, 0.07), transparent 76%),
+          #080a11;
+      }
+
+      .workspace {
+        height: 100dvh;
+        margin-left: 92px;
+      }
+
+      .sidebar {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        width: 92px;
+        height: 100dvh;
+        align-items: center;
+        flex-direction: column;
+        gap: 26px;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 24px 0;
+        background: rgba(10, 11, 16, 0.82);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand-slot {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.055);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+      }
+
+      .brand-slot::before {
+        width: 20px;
+        height: 20px;
+        border: 1px dashed rgba(255, 255, 255, 0.32);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.035);
+        content: "";
+      }
+
+      .sidebar .nav {
+        display: grid;
+        width: 100%;
+        gap: 24px;
+        margin-top: 86px;
+      }
+
+      .sidebar .nav-item {
+        position: relative;
+        display: grid;
+        width: 100%;
+        min-height: 54px;
+        justify-items: center;
+        gap: 7px;
+        color: #777b88;
+        font-size: 12px;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .sidebar .nav-item.active {
+        color: #fff;
+      }
+
+      .sidebar .nav-icon {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 7px;
+        color: currentColor;
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .sidebar .nav-item.active .nav-icon {
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.09);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.22);
+      }
+
+      .sidebar .nav-icon::before {
+        width: 11px;
+        height: 11px;
+        border: 1px dashed rgba(255, 255, 255, 0.34);
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.04);
+        content: "";
+      }
+
+      .bottom-tools {
+        position: absolute;
+        right: 0;
+        bottom: 24px;
+        left: 0;
+        display: grid;
+        justify-items: center;
+        gap: 18px;
+      }
+
+      .bottom-slot {
+        color: #777b88;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 50%;
+        background: #24262d url("./assets/avatar/01-human-avatar-136.jpg") center / cover no-repeat;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.36);
+      }
+
+      .top-bar {
+        background: rgba(6, 6, 9, 0.9);
+      }
+
+      .tab.is-active::after {
+        background: #082dff;
+      }
+
+      .infinite-canvas {
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.023) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.023) 1px, transparent 1px),
+          linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          radial-gradient(ellipse 48% 42% at 48% 42%, rgba(8, 45, 255, 0.11), transparent 72%),
+          radial-gradient(ellipse 42% 38% at 74% 30%, rgba(8, 45, 255, 0.065), transparent 76%),
+          #07070a;
+        background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px, auto, auto, auto;
+        isolation: isolate;
+      }
+
+      .infinite-canvas::before,
+      .infinite-canvas::after {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        content: "";
+      }
+
+      .infinite-canvas::before {
+        z-index: 0;
+        opacity: 0.56;
+        background:
+          radial-gradient(ellipse 36% 24% at 22% 34%, rgba(8, 45, 255, 0.22), transparent 74%),
+          radial-gradient(ellipse 42% 28% at 78% 27%, rgba(8, 45, 255, 0.18), transparent 76%),
+          radial-gradient(ellipse 38% 24% at 55% 70%, rgba(8, 45, 255, 0.16), transparent 74%);
+        filter: blur(18px);
+        animation: canvasAurora 15s ease-in-out infinite alternate;
+      }
+
+      .infinite-canvas::after {
+        z-index: 0;
+        opacity: 0.48;
+        background-image: radial-gradient(circle, rgba(8, 45, 255, 0.74) 0 1px, transparent 1.4px);
+        background-size: 15px 15px;
+        mask-image: radial-gradient(ellipse 54% 52% at 67% 42%, #000 0 18%, rgba(0,0,0,.62) 48%, transparent 78%);
+        animation: canvasRays 18s ease-in-out infinite alternate;
+      }
+
+      .empty-launch,
+      .canvas-world,
+      .canvas-new-creation {
+        z-index: 2;
+      }
+
+      @keyframes canvasAurora {
+        from { transform: translate3d(-3%, -2%, 0) scale(1); opacity: .24; }
+        to { transform: translate3d(4%, 3%, 0) scale(1.08); opacity: .4; }
+      }
+
+      @keyframes canvasRays {
+        from { transform: translate3d(-2%, -1%, 0) scale(.98); opacity: .32; }
+        to { transform: translate3d(3%, 2%, 0) scale(1.04); opacity: .58; }
+      }
+
+      .launch-card,
+      .compose-node,
+      .generated-card {
+        transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      }
+
+      .launch-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(8, 45, 255, 0.54);
+        box-shadow: 0 24px 56px rgba(0, 0, 0, 0.38), 0 0 34px rgba(8, 45, 255, 0.18);
+      }
+
+      .launch-card {
+        border-color: rgba(8, 45, 255, 0.24);
+        background: linear-gradient(145deg, rgba(255,255,255,.065), rgba(8,45,255,.09)), rgba(10,10,14,.86);
+        backdrop-filter: blur(18px);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .infinite-canvas::before,
+        .infinite-canvas::after {
+          animation: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .sidebar { width: 76px; }
+        .sidebar .nav { margin-top: 64px; }
+        .workspace { margin-left: 76px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="侧边栏导航">
+        <div class="brand-slot" aria-label="icon展位"></div>
+        <nav class="nav">
+          <a class="nav-item" href="./index.html"><span class="nav-icon"></span><span>首页</span></a>
+          <a class="nav-item active" href="./ai-canvas-generator.html"><span class="nav-icon"></span><span>AI生成</span></a>
+          <span class="nav-item"><span class="nav-icon"></span><span>工作流</span></span>
+          <span class="nav-item"><span class="nav-icon"></span><span>我的</span></span>
+        </nav>
+        <div class="bottom-tools">
+          <span class="nav-icon bottom-slot" aria-label="功能占位"></span>
+          <span class="avatar" aria-label="我的头像"></span>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="top-bar">
+          <div class="tabs" aria-label="生成类型">
+            <button class="tab" type="button" data-mode="image">图片生成</button>
+            <button class="tab" type="button" data-mode="video">视频生成</button>
+            <button class="tab" type="button" data-mode="edit">视频编辑</button>
+          </div>
+          <div class="top-actions is-hidden" id="top-actions">
+            <div class="zoom-control" aria-label="画布缩放">
+              <button id="zoom-out" type="button">−</button>
+              <span id="zoom-label">82%</span>
+              <button id="zoom-in" type="button">+</button>
+            </div>
+            <button class="icon-action" id="fit-canvas" type="button" title="适应画布">⛶</button>
+            <button class="icon-action" type="button" title="查看历史">↺</button>
+          </div>
+        </header>
+
+        <section class="infinite-canvas" id="canvas" aria-label="无限创作画布">
+          <div class="empty-launch" id="empty-launch">
+            <div class="launch-options" aria-label="选择创作类型">
+              <button class="launch-card" type="button" data-mode="image"><span class="launch-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.5"></circle><path d="m4 17 4.5-4.5 3 3 2-2 3.5 3.5"></path><path d="M19 3v6M16 6h6"></path></svg></span><span class="launch-copy"><strong>图片生成</strong><small>从文字或参考图开始</small></span></button>
+              <button class="launch-card" type="button" data-mode="video"><span class="launch-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4z"></path><path d="m7 7 2-4M12 7l2-4M17 7l2-4M4 11h16"></path></svg></span><span class="launch-copy"><strong>视频生成</strong><small>将创意延展为动态画面</small></span></button>
+              <button class="launch-card" type="button" data-mode="edit"><span class="launch-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"></circle><circle cx="6" cy="17" r="3"></circle><path d="m8.7 8.4 11.3 5.6M8.7 15.6 20 10"></path></svg></span><span class="launch-copy"><strong>视频编辑</strong><small>剪辑与重构已有视频</small></span></button>
+            </div>
+          </div>
+
+          <div class="canvas-world is-hidden" id="world">
+            <svg class="node-link is-hidden" id="node-link" viewBox="0 0 1400 760" aria-hidden="true">
+              <path id="result-line"></path>
+              <path class="branch-line is-hidden" id="branch-line"></path>
+            </svg>
+
+            <form class="compose-node" id="compose-node" style="left: 260px; top: 118px" data-key="compose">
+              <div class="node-label"><span id="compose-label">Image</span><strong id="compose-model">Qwen</strong></div>
+              <div class="generation-surface" aria-live="polite">
+                <div class="generation-loading">
+                  <span class="scan-light"></span>
+                  <div class="loading-status">
+                    <span class="loading-spinner"></span>
+                    <strong>正在生成图片</strong>
+                    <span>正在构图、调整光线与细节</span>
+                  </div>
+                  <div class="loading-progress"><span></span></div>
+                </div>
+                <img class="generated-preview" src="public/generated-cat.png" alt="窗边的小猫生成结果" draggable="false" />
+              </div>
+              <div class="compose-body primary-compose-body">
+                <div class="prompt-shell">
+                  <button class="reference-button" type="button"><span class="plus-glyph">+</span></button>
+                  <textarea id="prompt-input" aria-label="创作提示词" placeholder="Create with your ideas">一只小猫在窗边，温暖自然光，写实摄影质感</textarea>
+                  <button class="send-button" type="submit">↑</button>
+                </div>
+              </div>
+              <div class="node-toolbar">
+                <button class="selector-control" type="button" data-panel="model"><span id="selected-model">Qwen Image 3.0</span></button>
+                <button class="selector-control" type="button" data-panel="params"><span id="selected-params">1K · 1:1 · 1</span></button>
+              </div>
+              <div class="settings-popover model-popover is-hidden" id="model-panel">
+                <div class="popover-heading"><strong>选择模型</strong><span>根据画面需求切换生成能力</span></div>
+                <div class="model-list">
+                  <button class="model-option is-selected" type="button" data-model="Qwen Image 3.0"><span class="model-badge">✦</span><span class="model-copy"><strong>Qwen Image 3.0</strong><small>真实细节，画面更自然</small></span><span class="check">✓</span></button>
+                  <button class="model-option" type="button" data-model="Wan 2.7 Image Pro"><span class="model-badge cyan">✦</span><span class="model-copy"><strong>Wan 2.7 Image Pro</strong><small>组图生成，强化叙事连贯性</small></span><span class="check"></span></button>
+                  <button class="model-option" type="button" data-model="Wan 2.7 Image"><span class="model-badge blue">✦</span><span class="model-copy"><strong>Wan 2.7 Image</strong><small>多图参考，提高主体一致性</small></span><span class="check"></span></button>
+                  <button class="model-option" type="button" data-model="Qwen Image 3.0 Pro"><span class="model-badge pink">✦</span><span class="model-copy"><strong>Qwen Image 3.0 Pro</strong><small>精准控图，还原肉眼级真实</small></span><span class="check"></span></button>
+                </div>
+              </div>
+              <div class="settings-popover parameter-popover is-hidden" id="params-panel">
+                <fieldset><legend>分辨率</legend><div class="segmented-options three-columns"><button class="is-selected" type="button" data-resolution="1K">1K</button><button type="button" data-resolution="1.5K">1.5K</button><button type="button" data-resolution="2K">2K</button></div></fieldset>
+                <fieldset><legend>比例</legend><div class="ratio-options"><button type="button" data-ratio="16:9"><i></i><span>16:9</span></button><button type="button" data-ratio="4:3"><i></i><span>4:3</span></button><button class="is-selected" type="button" data-ratio="1:1"><i></i><span>1:1</span></button><button type="button" data-ratio="3:4"><i></i><span>3:4</span></button><button type="button" data-ratio="9:16"><i></i><span>9:16</span></button><button type="button" data-ratio="2:3"><i></i><span>2:3</span></button><button type="button" data-ratio="3:2"><i></i><span>3:2</span></button></div></fieldset>
+                <fieldset><legend>生成数量</legend><div class="segmented-options four-columns"><button class="is-selected" type="button" data-count="1">1</button><button type="button" data-count="2">2</button><button type="button" data-count="3">3</button><button type="button" data-count="4">4</button></div></fieldset>
+              </div>
+            </form>
+
+            <div class="add-node-zone is-hidden" id="add-zone" style="left: 780px; top: 328px">
+              <button class="add-node-button" id="add-node-button" type="button" aria-label="继续创作"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+              <div class="add-menu is-hidden" id="add-menu">
+                <div class="add-menu-title"><span>继续创作</span><button id="close-menu" type="button">×</button></div>
+                <button type="button" data-branch="image"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.5"></circle><path d="m4 17 4.5-4.5 3 3 2-2 3.5 3.5"></path><path d="M19 3v6M16 6h6"></path></svg><span><strong>图片生成</strong><small>基于上一张图继续生成图片</small></span></button>
+                <button type="button" data-branch="video"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4z"></path><path d="m7 7 2-4M12 7l2-4M17 7l2-4M4 11h16"></path></svg><span><strong>视频生成</strong><small>把上一张图变成动态视频</small></span></button>
+                <button type="button" data-branch="edit"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"></circle><circle cx="6" cy="17" r="3"></circle><path d="m8.7 8.4 11.3 5.6M8.7 15.6 20 10"></path></svg><span><strong>视频编辑</strong><small>基于已有视频继续修改</small></span></button>
+              </div>
+            </div>
+
+            <form class="compose-node branch-node is-hidden" id="branch-node" style="left: 900px; top: 118px" data-key="branch">
+              <div class="node-label"><span id="branch-label">视频生成</span><strong>基于上一张图</strong></div>
+              <div class="compose-body">
+                <img class="inline-reference" src="public/generated-cat.png" alt="上一张小猫图" draggable="false" />
+                <button class="reference-button" type="button"><span class="plus-glyph">+</span></button>
+                <textarea aria-label="继续创作提示词" placeholder="描述下一步想做什么">让小猫转头看向窗外，窗帘被风轻轻吹动</textarea>
+                <button class="send-button" type="submit">↑</button>
+              </div>
+              <div class="node-toolbar">
+                <button type="button">参考上一节点</button>
+                <button id="branch-toolbar" type="button">Image-to-Video</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="canvas-new-creation is-hidden" id="canvas-new-creation">
+            <div class="add-menu new-creation-menu is-hidden" id="new-creation-menu">
+              <div class="add-menu-title"><span>新建创作</span><button id="close-new-menu" type="button" aria-label="关闭">×</button></div>
+              <button type="button" data-new-mode="image"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.5"></circle><path d="m4 17 4.5-4.5 3 3 2-2 3.5 3.5"></path><path d="M19 3v6M16 6h6"></path></svg><span><strong>图片生成</strong><small>从文字或参考图开始</small></span></button>
+              <button type="button" data-new-mode="video"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4z"></path><path d="m7 7 2-4M12 7l2-4M17 7l2-4M4 11h16"></path></svg><span><strong>视频生成</strong><small>将创意延展为动态画面</small></span></button>
+              <button type="button" data-new-mode="edit"><svg class="add-menu-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"></circle><circle cx="6" cy="17" r="3"></circle><path d="m8.7 8.4 11.3 5.6M8.7 15.6 20 10"></path></svg><span><strong>视频编辑</strong><small>剪辑与重构已有视频</small></span></button>
+            </div>
+            <button class="canvas-add-button" id="canvas-add-button" type="button" aria-label="新建创作" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const labels = {
+        image: "图片生成",
+        video: "视频生成",
+        edit: "视频编辑",
+      };
+      const canvas = document.querySelector("#canvas");
+      const world = document.querySelector("#world");
+      const emptyLaunch = document.querySelector("#empty-launch");
+      const topActions = document.querySelector("#top-actions");
+      const zoomLabel = document.querySelector("#zoom-label");
+      const tabs = document.querySelectorAll(".tab");
+      const composeNode = document.querySelector("#compose-node");
+      const branchNode = document.querySelector("#branch-node");
+      const addZone = document.querySelector("#add-zone");
+      const addMenu = document.querySelector("#add-menu");
+      const nodeLink = document.querySelector("#node-link");
+      const branchLine = document.querySelector("#branch-line");
+      const resultLine = document.querySelector("#result-line");
+      const composeLabel = document.querySelector("#compose-label");
+      const composeModel = document.querySelector("#compose-model");
+      const branchLabel = document.querySelector("#branch-label");
+      const branchToolbar = document.querySelector("#branch-toolbar");
+      const canvasNewCreation = document.querySelector("#canvas-new-creation");
+      const newCreationMenu = document.querySelector("#new-creation-menu");
+      const canvasAddButton = document.querySelector("#canvas-add-button");
+
+      let zoom = 82;
+      let offset = { x: 0, y: 0 };
+      let canvasDrag = null;
+      let nodeDrag = null;
+      let selectedModel = "Qwen Image 3.0";
+      let selectedResolution = "1K";
+      let selectedRatio = "1:1";
+      let selectedCount = "1";
+
+      const panels = {
+        model: document.querySelector("#model-panel"),
+        params: document.querySelector("#params-panel"),
+      };
+
+      function closeSettingPanels() {
+        Object.values(panels).forEach((panel) => panel.classList.add("is-hidden"));
+        document.querySelectorAll("[data-panel]").forEach((button) => button.classList.remove("is-open"));
+      }
+
+      function syncSelectedSettings() {
+        document.querySelector("#selected-model").textContent = selectedModel;
+        composeModel.textContent = selectedModel;
+        document.querySelector("#selected-params").textContent = `${selectedResolution} · ${selectedRatio} · ${selectedCount}`;
+      }
+
+      function syncFlow() {
+        const composeX = Number.parseFloat(composeNode.style.left || "0");
+        const composeY = Number.parseFloat(composeNode.style.top || "0");
+        const branchX = Number.parseFloat(branchNode.style.left || "0");
+        const branchY = Number.parseFloat(branchNode.style.top || "0");
+        const addX = composeX + 520;
+        const addY = composeY + 244;
+
+        addZone.style.left = `${addX}px`;
+        addZone.style.top = `${addY}px`;
+        resultLine.setAttribute("d", `M ${composeX + 480} ${composeY + 268} C ${composeX + 500} ${composeY + 268}, ${addX - 18} ${addY + 24}, ${addX} ${addY + 24}`);
+        branchLine.setAttribute("d", `M ${addX + 48} ${addY + 24} C ${addX + 72} ${addY + 24}, ${branchX - 28} ${branchY + 240}, ${branchX} ${branchY + 240}`);
+      }
+
+      function paintWorld() {
+        world.style.transform = `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) scale(${zoom / 100})`;
+        zoomLabel.textContent = `${zoom}%`;
+      }
+
+      function chooseMode(mode) {
+        emptyLaunch.classList.add("is-hidden");
+        topActions.classList.remove("is-hidden");
+        canvasNewCreation.classList.remove("is-hidden");
+        newCreationMenu.classList.add("is-hidden");
+        canvasAddButton.setAttribute("aria-expanded", "false");
+        world.classList.remove("is-hidden");
+        tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.mode === mode));
+        composeLabel.textContent = mode === "image" ? "Image" : mode === "video" ? "Video" : "Edit";
+        composeModel.textContent = mode === "image" ? "Qwen" : "Video Pro";
+        closeSettingPanels();
+        composeNode.querySelectorAll(".node-toolbar .selector-control").forEach((control) => { control.disabled = false; });
+        composeNode.classList.remove("has-output", "has-result", "is-generating");
+        addZone.classList.add("is-hidden");
+        addMenu.classList.add("is-hidden");
+        branchNode.classList.add("is-hidden");
+        nodeLink.classList.add("is-hidden");
+        branchLine.classList.add("is-hidden");
+      }
+
+      function dragStartFor(key, event) {
+        if (event.target.closest("button, textarea, input, select")) return;
+        event.preventDefault();
+        event.stopPropagation();
+        event.currentTarget.setPointerCapture(event.pointerId);
+        const node = event.currentTarget;
+        nodeDrag = {
+          node,
+          x: event.clientX,
+          y: event.clientY,
+          startX: Number.parseFloat(node.style.left || "0"),
+          startY: Number.parseFloat(node.style.top || "0"),
+        };
+      }
+
+      function moveDraggedNode(event) {
+        if (!nodeDrag) return;
+        const nextX = nodeDrag.startX + (event.clientX - nodeDrag.x) / (zoom / 100);
+        const nextY = nodeDrag.startY + (event.clientY - nodeDrag.y) / (zoom / 100);
+        nodeDrag.node.style.left = `${nextX}px`;
+        nodeDrag.node.style.top = `${nextY}px`;
+        syncFlow();
+      }
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => chooseMode(button.dataset.mode));
+      });
+
+      canvasAddButton.addEventListener("click", () => {
+        const opening = newCreationMenu.classList.contains("is-hidden");
+        newCreationMenu.classList.toggle("is-hidden");
+        canvasAddButton.setAttribute("aria-expanded", String(opening));
+      });
+
+      document.querySelector("#close-new-menu").addEventListener("click", () => {
+        newCreationMenu.classList.add("is-hidden");
+        canvasAddButton.setAttribute("aria-expanded", "false");
+      });
+
+      document.querySelectorAll("[data-new-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          composeNode.style.left = "260px";
+          composeNode.style.top = "118px";
+          offset = { x: 0, y: 0 };
+          chooseMode(button.dataset.newMode);
+          syncFlow();
+          paintWorld();
+        });
+      });
+
+      document.querySelectorAll("[data-panel]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const panel = panels[button.dataset.panel];
+          const shouldOpen = panel.classList.contains("is-hidden");
+          closeSettingPanels();
+          if (shouldOpen) {
+            panel.classList.remove("is-hidden");
+            button.classList.add("is-open");
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-model]").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedModel = button.dataset.model;
+          document.querySelectorAll("[data-model]").forEach((option) => {
+            const selected = option === button;
+            option.classList.toggle("is-selected", selected);
+            option.querySelector(".check").textContent = selected ? "✓" : "";
+          });
+          syncSelectedSettings();
+          closeSettingPanels();
+        });
+      });
+
+      ["resolution", "ratio", "count"].forEach((kind) => {
+        document.querySelectorAll(`[data-${kind}]`).forEach((button) => {
+          button.addEventListener("click", () => {
+            document.querySelectorAll(`[data-${kind}]`).forEach((option) => option.classList.toggle("is-selected", option === button));
+            if (kind === "resolution") selectedResolution = button.dataset.resolution;
+            if (kind === "ratio") selectedRatio = button.dataset.ratio;
+            if (kind === "count") selectedCount = button.dataset.count;
+            syncSelectedSettings();
+          });
+        });
+      });
+
+      document.querySelector("#zoom-out").addEventListener("click", () => {
+        zoom = Math.max(54, zoom - 8);
+        paintWorld();
+      });
+
+      document.querySelector("#zoom-in").addEventListener("click", () => {
+        zoom = Math.min(122, zoom + 8);
+        paintWorld();
+      });
+
+      document.querySelector("#fit-canvas").addEventListener("click", () => {
+        zoom = 82;
+        offset = { x: 0, y: 0 };
+        paintWorld();
+      });
+
+      canvas.addEventListener("pointerdown", (event) => {
+        if (event.target !== canvas) return;
+        canvas.setPointerCapture(event.pointerId);
+        canvas.classList.add("is-panning");
+        canvasDrag = {
+          x: event.clientX,
+          y: event.clientY,
+          offsetX: offset.x,
+          offsetY: offset.y,
+        };
+      });
+
+      canvas.addEventListener("pointermove", (event) => {
+        if (!canvasDrag) return;
+        offset = {
+          x: canvasDrag.offsetX + event.clientX - canvasDrag.x,
+          y: canvasDrag.offsetY + event.clientY - canvasDrag.y,
+        };
+        paintWorld();
+      });
+
+      function endCanvasDrag() {
+        canvasDrag = null;
+        canvas.classList.remove("is-panning");
+      }
+
+      canvas.addEventListener("pointerup", endCanvasDrag);
+      canvas.addEventListener("pointercancel", endCanvasDrag);
+
+      [composeNode, branchNode].forEach((node) => {
+        node.addEventListener("pointerdown", (event) => dragStartFor(node.dataset.key, event));
+      });
+
+      world.addEventListener("pointermove", moveDraggedNode);
+      world.addEventListener("pointerup", () => {
+        nodeDrag = null;
+      });
+      world.addEventListener("pointercancel", () => {
+        nodeDrag = null;
+      });
+
+      composeNode.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const button = composeNode.querySelector(".send-button");
+        if (button.disabled) return;
+        button.disabled = true;
+        composeNode.querySelectorAll(".node-toolbar .selector-control").forEach((control) => { control.disabled = true; });
+        composeNode.classList.add("has-output", "is-generating");
+        window.setTimeout(() => {
+          composeNode.classList.remove("is-generating");
+          composeNode.classList.add("has-result");
+          addZone.classList.remove("is-hidden");
+          nodeLink.classList.remove("is-hidden");
+          button.disabled = false;
+        }, 5000);
+      });
+
+      branchNode.addEventListener("submit", (event) => event.preventDefault());
+
+      document.querySelector("#add-node-button").addEventListener("click", () => {
+        addMenu.classList.toggle("is-hidden");
+      });
+
+      document.querySelector("#close-menu").addEventListener("click", () => {
+        addMenu.classList.add("is-hidden");
+      });
+
+      document.querySelectorAll("[data-branch]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const mode = button.dataset.branch;
+          branchLabel.textContent = labels[mode];
+          branchToolbar.textContent = mode === "video" ? "Image-to-Video" : "Image-to-Image";
+          const composeX = Number.parseFloat(composeNode.style.left || "0");
+          const composeY = Number.parseFloat(composeNode.style.top || "0");
+          branchNode.style.left = `${composeX + 640}px`;
+          branchNode.style.top = `${composeY}px`;
+          branchNode.classList.remove("is-hidden");
+          branchLine.classList.remove("is-hidden");
+          addMenu.classList.add("is-hidden");
+          syncFlow();
+        });
+      });
+
+      syncFlow();
+      paintWorld();
+    </script>
+  </body>
+</html>

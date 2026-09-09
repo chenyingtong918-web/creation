@@ -23,6 +23,14 @@
       .then(function (res) { return res.text(); })
       .then(function (html) {
         document.body.innerHTML = html;
+        document.body.querySelectorAll("script").forEach(function (oldScript) {
+          var script = document.createElement("script");
+          Array.from(oldScript.attributes).forEach(function (attribute) {
+            script.setAttribute(attribute.name, attribute.value);
+          });
+          script.textContent = oldScript.textContent;
+          oldScript.replaceWith(script);
+        });
       });
   </script>
 </body>
